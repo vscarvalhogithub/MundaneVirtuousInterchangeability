@@ -5,6 +5,9 @@ import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { auth, db } from './firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+
+
 
 function Login({ onLogin, onSignUp }) {
   const [email, setEmail] = useState('');
@@ -18,28 +21,29 @@ function Login({ onLogin, onSignUp }) {
   };
 
   const handleSignUp = async (event) => {
-    event.preventDefault();
+  event.preventDefault();
 
-    try {
-      // Cadastrar o usuário com Firebase
-      const newUser = await auth.createUserWithEmailAndPassword(email, password);
-      // Adicionar informações do usuário ao banco de dados Firestore
-      await db.collection('users').doc(newUser.user.uid).set({
-        email: email,
-      });
-      // Chamar a função onSignUp passada como prop
-      onSignUp();
-    } catch (error) {
-      console.error('Erro ao criar conta:', error.message);
-      // Aqui você pode lidar com erros de cadastro, por exemplo, mostrar uma mensagem de erro para o usuário
-    }
-  };
+  try {
+    // Cadastrar o usuário com Firebase
+    const newUser = await createUserWithEmailAndPassword(auth, email, password);
+    // Adicionar informações do usuário ao banco de dados Firestore
+    await db.collection('users').doc(newUser.user.uid).set({
+      email: email,
+    });
+    // Chamar a função onSignUp passada como prop
+    onSignUp();
+  } catch (error) {
+    console.error('Erro ao criar conta:', error.message);
+    // Aqui você pode lidar com erros de cadastro, por exemplo, mostrar uma mensagem de erro para o usuário
+  }
+};
+
 
   return (
     <Container maxWidth="sm">
       <Box sx={{ mt: 8, mb: 4 }}>
         <Typography variant="h4" align="center">
-          Login
+          Sistema de cadastro
         </Typography>
       </Box>
       <form onSubmit={handleSubmit}>
