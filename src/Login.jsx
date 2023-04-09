@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { auth, db } from './firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { collection, addDoc } from 'firebase/firestore';
 
 
 
@@ -27,7 +28,9 @@ function Login({ onLogin, onSignUp }) {
     // Cadastrar o usuário com Firebase
     const newUser = await createUserWithEmailAndPassword(auth, email, password);
     // Adicionar informações do usuário ao banco de dados Firestore
-    await db.collection('users').doc(newUser.user.uid).set({
+    //await addDoc(collection(firestore, 'users'), {
+    await addDoc(collection(db, 'users'), {
+
       email: email,
     });
     // Chamar a função onSignUp passada como prop
