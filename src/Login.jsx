@@ -4,41 +4,43 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { auth } from './firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { auth, db } from './firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { collection, addDoc } from 'firebase/firestore';
+
+
 
 function Login({ onLogin, onSignUp }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
 
-    try {
-      // Autenticar o usuário com Firebase
-      await signInWithEmailAndPassword(auth, email, password);
-      // Chamar a função onLogin passada como prop
-      onLogin();
-    } catch (error) {
-      console.error('Erro ao efetuar login:', error.message);
-      setError('Email ou senha inválidos. Por favor, tente novamente.');
-    }
+    // Chamar a função onLogin passada como prop
+    onLogin(email, password);
   };
 
   const handleSignUp = async (event) => {
-    event.preventDefault();
+  event.preventDefault();
 
-    try {
-      // Cadastrar o usuário com Firebase
-      const newUser = await createUserWithEmailAndPassword(auth, email, password);
-      // Chamar a função onSignUp passada como prop
-      onSignUp();
-    } catch (error) {
-      console.error('Erro ao criar conta:', error.message);
-      setError('Erro ao criar conta. Por favor, tente novamente.');
-    }
-  };
+  try {
+    // Cadastrar o usuário com Firebase
+    const newUser = await createUserWithEmailAndPassword(auth, email, password);
+    // Adicionar informações do usuário ao banco de dados Firestore
+    //await addDoc(collection(firestore, 'users'), {
+    await addDoc(collection(db, 'users'), {
+
+      email: email,
+    });
+    // Chamar a função onSignUp passada como prop
+    onSignUp();
+  } catch (error) {
+    console.error('Erro ao criar conta:', error.message);
+    // Aqui você pode lidar com erros de cadastro, por exemplo, mostrar uma mensagem de erro para o usuário
+  }
+};
+
 
   return (
     <Container maxWidth="sm">
@@ -79,11 +81,6 @@ function Login({ onLogin, onSignUp }) {
             Cadastrar
           </Button>
         </Box>
-        {error && (
-          <Box sx={{ mb: 2 }}>
-            <Typography color="error">{error}</Typography>
-          </Box>
-        )}
       </form>
     </Container>
   );
