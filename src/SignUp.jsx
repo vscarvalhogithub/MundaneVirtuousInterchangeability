@@ -4,9 +4,13 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { auth, db } from './firebase';
+import { auth } from './firebase';
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
+
+const db = getFirestore();
 
 function SignUp({ onSignUp }) {
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSignUpSuccess, setIsSignUpSuccess] = useState(false);
@@ -16,7 +20,7 @@ function SignUp({ onSignUp }) {
 
     try {
       const newUser = await auth.createUserWithEmailAndPassword(email, password);
-      await db.collection('users').doc(newUser.user.uid).set({
+      await setDoc(doc(db, 'users', newUser.user.uid), {
         email: email,
       });
       console.log('Conta criada com sucesso');

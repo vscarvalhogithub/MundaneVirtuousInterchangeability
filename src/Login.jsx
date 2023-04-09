@@ -43,7 +43,7 @@ function Login({ onLogin, onSignUp }) {
     <Container maxWidth="sm">
       <Box sx={{ mt: 8, mb: 4 }}>
         <Typography variant="h4" align="center">
-          Sistema de cadastro
+          Sistema de cadastro de dados
         </Typography>
       </Box>
       <form onSubmit={handleSubmit}>
