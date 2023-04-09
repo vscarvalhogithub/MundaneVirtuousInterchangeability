@@ -15,13 +15,9 @@ function DataEntry() {
       try {
         const response = await api.get('/users/2');
         const data = response.data;
+        console.log("Dados da API:", data);
 
-        // Verifique se os dados retornados pela API estão no formato correto
-        console.log("Data from API:", data);
-
-        setName(data.name || ''); // Adicione '||' para evitar 'undefined'
-        setCpf(data.cpf || '');
-        setPhone(data.phone || '');
+        setName(data.name || '');
         setEmail(data.email || '');
       } catch (error) {
         console.error('Erro ao buscar dados da API:', error.message);
@@ -34,7 +30,6 @@ function DataEntry() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      // Salve os dados no Firestore
       await addDoc(collection(db, 'data'), { name, cpf, phone, email });
       setName('');
       setCpf('');
@@ -49,7 +44,7 @@ function DataEntry() {
 
   return (
     <div>
-      <h2>Salvar dados</h2>
+      <h2>Preencha os dados</h2>
       <form onSubmit={handleSubmit}>
         <label>
           Nome:
